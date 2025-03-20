@@ -3,7 +3,11 @@ from szkp import Prover, Verifier, zkp_encrypt_vote
 
 from server import VotingServer
 
-votes = [(1, 1), (2, 0), (3, 1)]
+# The votes that were casted
+casting_votes = {1: 1, 2: 0, 3: 1, 4: 0, 5: 0, 6: 1, 7: 1, 8: 1, 9: 0, 10: 1}
+
+# The preferences of the REAL voters
+voters_preferences = {1: 1, 2: 0, 3: 1, 4: 0, 5: 0, 6: 1, 7: 0, 8: 1, 9: 0, 10: 1}
 
 
 class VotingClient:
@@ -42,13 +46,14 @@ def main():
     server = VotingServer(paillier)
 
     # Cast all votes
-    for voter_id, vote in votes:
+    for voter_id, vote in casting_votes.items():
         vote = client.cast_vote(voter_id, vote)
-        server.add_vote(vote)
+        server.add_vote(vote)  # send the encrypted vote to the server
 
+    print("\n" + "------------------- Voting Results --------------------------" + "\n")
     # Number of votes
     print(server)  # Number of votes: len(votes)
-    assert server.get_number_of_votes() == len(votes)
+    assert server.get_number_of_votes() == len(casting_votes)
 
     # Get voting final results
     aggregated_encrypted_results = (
@@ -57,20 +62,16 @@ def main():
     final_tally = client.decrypt_aggregated_results(
         aggregated_encrypted_results
     )  # Decrypted final tally
-    print(f"Final Decrypted Tally: {final_tally}")  # Final Decrypted Tally: 2
+    print(f"\nFinal Decrypted Tally: {final_tally}")  # Final Decrypted Tally: 2
 
-    print(
-        "\n" + "-------- Votes Verifications using Sigma ZKP protocol --------" + "\n"
-    )
+    print("\n\n" + "-------- Votes Verifications using Sigma ZKP protocol --------")
 
     """ Verify votes using Sigma ZKP protocol
     The system checks for voting frauds
-    Does the voter know what she voted for? 
+    Does the voter know what she voted for?
     """
-
-    for vote in votes:
-        voter_id, cleartext_vote = vote
-        print(f"\nVoter ID: {voter_id}, ", end="")
+    verification = True
+    for voter_id, cleartext_vote in voters_preferences.items():
         zk_verifier = server.votes[voter_id]["zk_verifier"]
         zk_prover = Prover(secret=cleartext_vote)
 
@@ -78,10 +79,18 @@ def main():
         zk_verifier.set_commitment(commitment)
         challenge = zk_verifier.get_challenge()
         proof = zk_prover.prove(challenge)
-        if zk_verifier.verify(proof):
-            print("Proof Accepted!")
-        else:
-            print("Proof Rejected!")
+        if zk_verifier.verify(proof) == False:
+            verification = False
+            print(f"\nVoter ID ({voter_id}): Proof Rejected!")
+
+    if verification:
+        print("\nAll votes verified successfully!")
+    else:
+        print("\nSome votes verification failed!")
+
+    print(
+        "\n\n" + "--------------------------------------------------------------" + "\n"
+    )
 
 
 if __name__ == "__main__":
