@@ -49,11 +49,12 @@ def main():
     )  # Decrypted final tally
     print(f"Final Decrypted Tally: {final_tally}")  # Final Decrypted Tally: 2
 
-    # voter_1_proof = server.get_proof(1)
-    # is_valid = client.zk.verify_proof(voter_1_proof, generator_g, 1)
-    # print(
-    #     f"Voter 1 Zero-Knowledge Proof Valid: {is_valid}"
-    # )  # Voter 1 Zero-Knowledge Proof Valid: True
+    voter_3_proof = server.get_proof(3)
+    print(f"Voter 3 Zero-Knowledge Proof: {voter_3_proof}")
+    is_valid = client.zk.verify_proof(voter_3_proof, generator_g, 1)
+    print(
+        f"Voter 3 Zero-Knowledge Proof Valid: {is_valid}"
+    )  # Voter 1 Zero-Knowledge Proof Valid: True
 
 
 if __name__ == "__main__":

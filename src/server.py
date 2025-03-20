@@ -10,7 +10,9 @@ class VotingServer:
         return f"Number of votes: {len(self.votes)}"
 
     def add_vote(self, vote: dict):
-        # print(f"\nserver has got vote:\n{vote}")
+        print(
+            f"\nVoter: {list(vote.keys())[0]}\nzk_proof: {list(vote.values())[0]['zk_proof']}"
+        )
         self.votes.update(vote)
 
     def get_number_of_votes(self):
@@ -25,7 +27,9 @@ class VotingServer:
         return aggregated_encrypted_vote
 
     def get_proof(self, voter_id):
-        return self.votes[voter_id].get("zk_proof")
+        for k, v in self.votes.items():
+            if k == voter_id:
+                return v.get("zk_proof")
         # for vote in self.votes:
         #     if voter_id in vote:
-        #         return vote[voter_id]["zk_proof"]
+        #         return vote[voter_id]["zk_proof"] # return vote[voter_id]["zk_proof"]
