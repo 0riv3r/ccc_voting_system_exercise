@@ -1,12 +1,14 @@
 from he import Paillier
-from zkp import ZeroKnowledgeProof
+from szkp import Prover, Verifier, zkp_encrypt_vote
+
 from server import VotingServer
+
+votes = [(1, 1), (2, 0), (3, 1)]
 
 
 class VotingClient:
     def __init__(self, paillier: Paillier, generator: int = 2):
         self.paillier = paillier
-        self.zk = ZeroKnowledgeProof(paillier.n)
         self.generator_g = generator
 
     def cast_vote(self, voter_id: int, vote: int):
@@ -14,33 +16,41 @@ class VotingClient:
         if vote not in [0, 1]:
             raise ValueError("Invalid vote. Vote must be 0 or 1.")
 
-        # Encrypt the vote using Paillier encryption
-        encrypted_vote = self.paillier.encrypt(vote)
+        zk_verifier = Verifier(k=zkp_encrypt_vote(w=vote))
 
-        # Generate zero-knowledge proof for vote validity
-        zk_proof = self.zk.generate_proof(vote, self.generator_g)
-
-        return {voter_id: {"vote": encrypted_vote, "zk_proof": zk_proof}}
+        return {
+            voter_id: {
+                "he_encrypted_vote": self.paillier.encrypt(
+                    vote
+                ),  # Encrypt the vote using Paillier encryption
+                "zk_verifier": zk_verifier,
+            }
+        }
 
     def decrypt_aggregated_results(self, aggregated_encrypted_results):
         return self.paillier.decrypt(aggregated_encrypted_results)
 
 
 def main():
+
     # Setup the Paillier cryptosystem and secure ZK proofs
     paillier = Paillier()
     generator_g = 2
+
+    # Setup the client and server
     client = VotingClient(paillier, generator_g)
     server = VotingServer(paillier)
 
-    votes = [(1, 1), (2, 0), (3, 1)]
+    # Cast all votes
     for voter_id, vote in votes:
         vote = client.cast_vote(voter_id, vote)
         server.add_vote(vote)
 
+    # Number of votes
     print(server)  # Number of votes: len(votes)
     assert server.get_number_of_votes() == len(votes)
 
+    # Get voting final results
     aggregated_encrypted_results = (
         server.get_aggregated_encrypted_results()
     )  # Aggregated encrypted results
@@ -49,12 +59,29 @@ def main():
     )  # Decrypted final tally
     print(f"Final Decrypted Tally: {final_tally}")  # Final Decrypted Tally: 2
 
-    voter_3_proof = server.get_proof(3)
-    print(f"Voter 3 Zero-Knowledge Proof: {voter_3_proof}")
-    is_valid = client.zk.verify_proof(voter_3_proof, generator_g, 1)
     print(
-        f"Voter 3 Zero-Knowledge Proof Valid: {is_valid}"
-    )  # Voter 1 Zero-Knowledge Proof Valid: True
+        "\n" + "-------- Votes Verifications using Sigma ZKP protocol --------" + "\n"
+    )
+
+    """ Verify votes using Sigma ZKP protocol
+    The system checks for voting frauds
+    Does the voter know what she voted for? 
+    """
+
+    for vote in votes:
+        voter_id, cleartext_vote = vote
+        print(f"\nVoter ID: {voter_id}, ", end="")
+        zk_verifier = server.votes[voter_id]["zk_verifier"]
+        zk_prover = Prover(secret=cleartext_vote)
+
+        commitment = zk_prover.get_commitment()
+        zk_verifier.set_commitment(commitment)
+        challenge = zk_verifier.get_challenge()
+        proof = zk_prover.prove(challenge)
+        if zk_verifier.verify(proof):
+            print("Proof Accepted!")
+        else:
+            print("Proof Rejected!")
 
 
 if __name__ == "__main__":
