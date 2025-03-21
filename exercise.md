@@ -1,12 +1,34 @@
-Sure! Here's an advanced exercise for graduate-level students that combines the concepts of zero-knowledge proofs and homomorphic encryption. This exercise is designed to challenge their understanding and application skills in these areas.
+An advanced exercise for graduate-level students that combines the concepts of zero-knowledge proofs and homomorphic encryption.
 
 ### Exercise:
 
-**Title: Confidential Voting System with Zero-Knowledge Proofs and Homomorphic Encryption** 
-**Objective:** 
-Develop a secure and confidential voting system using homomorphic encryption for vote tallying and zero-knowledge proofs to ensure the integrity of the votes without revealing individual choices. 
-**Scenario:** 
-You are tasked with designing a secure online voting system where the confidentiality of each voter's choice is preserved, yet the final tally can be publicly verified. The system should leverage homomorphic encryption to aggregate votes and use zero-knowledge proofs to guarantee that votes are correctly cast without revealing the vote itself. 
+**Title: Confidential Voting System with Homomorphic Encryption and Zero-Knowledge Proofs** 
+**Objective:** </br></br>
+Develop a secure and confidential voting system using homomorphic encryption for vote tallying and zero-knowledge proofs to ensure the integrity of the votes without revealing individual choices. </br></br>
+**The scenario at high-level:** </br>
+You are tasked with designing a secure online voting system where the confidentiality of each voter's choice is preserved, yet the final tally can be publicly verified. The system should leverage homomorphic encryption to aggregate votes and use zero-knowledge proofs to guarantee that votes are correctly cast without revealing the vote itself. </br></br>
+**The scenario in details:** 
+There are two components: a client and a server.</br>
+
+**Phase #1, Voting:**</br>
+At this stage, we want a system that calculates the poll's voting results.</br>
+
+The client:</br>
+- An Interactive Kiosk where people are being identified (identification and authentication are OOS; we assume they are done for us) and vote 'Yes' or 'No' to a poll question.
+- The client does not have any memory. Once a vote is done, the client doesn't store any of it. 
+- The client holds a private/public encryption key set, encrypts each vote, and sends it encrypted to the server.</br>
+
+The server:
+- The server is cloud-based
+- The server doesn't have the encryption private key and thus can't access the votes' cleartext information.
+- The server provides the poll's results at the end, whether most voters chose 'Yes' or 'No.' 
+
+</br>**Phase #2, Votes verification:**</br>
+At this stage, we want to check if there was any fraud and if there are people who fraudsters managed to steal their identity and vote for them.</br></br>
+The server will contact each person with the right to vote and ask them to prove that they know what they voted for without revealing their vote (and remember that the server doesn’t know any of the individual votes).
+
+
+
 **Tasks:**
 
 1. **Homomorphic Encryption Setup:**
