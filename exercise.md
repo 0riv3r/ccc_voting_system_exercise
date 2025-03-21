@@ -4,7 +4,7 @@ An advanced exercise for graduate-level students that combines the concepts of z
 
 **Title: Confidential Voting System with Homomorphic Encryption and Zero-Knowledge Proofs** 
 **Objective:** </br></br>
-Develop a secure and confidential voting system using homomorphic encryption for vote tallying and zero-knowledge proofs to ensure the integrity of the votes without revealing individual choices. </br></br>
+Using the Privacy-Enhancing Technologies (PET) we have covered in the last two course sessions, develop a secure and confidential voting system using homomorphic encryption for vote tallying and zero-knowledge proofs to ensure the integrity of the votes without revealing individual choices. </br></br>
 **The scenario at high-level:** </br>
 You are tasked with designing a secure online voting system where the confidentiality of each voter's choice is preserved, yet the final tally can be publicly verified. The system should leverage homomorphic encryption to aggregate votes and use zero-knowledge proofs to guarantee that votes are correctly cast without revealing the vote itself. </br></br>
 **The scenario in details:** 
@@ -27,51 +27,6 @@ The server:
 At this stage, we want to check if there was any fraud and if there are people who fraudsters managed to steal their identity and vote for them.</br></br>
 The server will contact each person with the right to vote and ask them to prove that they know what they voted for without revealing their vote (and remember that the server doesn’t know any of the individual votes).
 
-
-
-**Tasks:**
-
-1. **Homomorphic Encryption Setup:**
-
-- Choose an appropriate homomorphic encryption scheme (e.g., Paillier or ElGamal).
-- Explain why your chosen scheme is suitable for this application.
-- Implement the encryption scheme and demonstrate how individual votes can be encrypted.
-
-2. **Casting a Vote:**
-
-- Each voter will encrypt their vote using the public key corresponding to the chosen homomorphic encryption scheme.
-- Design a method for voters to submit their encrypted votes in such a way that the voter's identity remains confidential.
-
-3. **Zero-Knowledge Proofs:**
-
-- Develop zero-knowledge proofs to ensure that an encrypted vote is either a valid "yes" or "no" vote, without revealing the actual vote.
-- Implement the zero-knowledge proof protocol and demonstrate its use in the voting system.
-- Explain how this proof can be verified by others while maintaining voter privacy.
-
-4. **Vote Aggregation:**
-
-- Using the homomorphic property of the encryption scheme, demonstrate how to aggregate (add) the encrypted votes to obtain an encrypted tally.
-- Ensure that the aggregation process is secure and does not reveal any individual votes.
-
-5. **Decryption and Result Verification:**
-
-- Design a method for decrypting the final vote tally using the private key.
-- Demonstrate how the decrypted result can be publicly verified and matched with the submitted encrypted votes and zero-knowledge proofs.
-- Explain why the final outcome is trustworthy without breaking voter privacy. 
-  **Bonus Challenge:**
-- Discuss potential attacks on this system and propose mitigations for each identified threat.
-- Explore how this system can handle a large number of voters efficiently and securely. 
-  **Deliverables:**
-- Source code for the implementation of the voting system, including encryption, zero-knowledge proofs, vote aggregation, and decryption.
-- A detailed report explaining the design choices, the cryptographic protocols used, and how they ensure the security and privacy of the voting process.
-- A demonstration of the entire process with a small set of test votes to showcase the functionality and security of the system. 
-  **Assessment Criteria:**
-- Correctness and security of the encryption and zero-knowledge proof implementations.
-- Clarity of the explanation for the design choices and cryptographic protocols.
-- Efficient and correct aggregation and decryption of votes.
-- Quality of the code and documentation.
-- Ability to identify and mitigate potential security threats. 
-  This exercise integrates key concepts of digital security and privacy and challenges students to apply theoretical knowledge in a practical, real-world scenario.
 
 # Solution
 

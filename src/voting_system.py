@@ -2,6 +2,8 @@ from he import Paillier
 from szkp import Prover
 from client import VotingClient
 from server import VotingServer
+import subprocess
+import re
 
 # The votes that were casted
 casting_votes = {1: 1, 2: 0, 3: 1, 4: 0, 5: 0, 6: 1, 7: 1, 8: 1, 9: 0, 10: 1}
@@ -10,14 +12,49 @@ casting_votes = {1: 1, 2: 0, 3: 1, 4: 0, 5: 0, 6: 1, 7: 1, 8: 1, 9: 0, 10: 1}
 voters_preferences = {1: 1, 2: 0, 3: 1, 4: 0, 5: 0, 6: 1, 7: 0, 8: 1, 9: 0, 10: 1}
 
 
+# Generate a random prime number
+# The output is in the file 'dhparams' at the same path
+# openssl dhparam -text -out dhparams 512
+def generate_prime() -> tuple:
+    p = None  # Order of the finite group. A big prime number.
+    g = None  # Generator of the finite group
+    subprocess.run(["openssl", "dhparam", "-text", "-out", "dhparams", "512"])
+    # Read the content of the file "dhparams"
+    with open("dhparams", "r") as file:
+        dhparams_text = file.read()
+
+    # Extract the multi-line hexadecimal prime number between "P:" and "G:"
+    match = re.search(r"P:\s*([\s\S]*?)\s*G:", dhparams_text, re.IGNORECASE)
+    if match:
+        hex_number = match.group(1).replace(":", "").replace("\n", "").replace(" ", "")
+        # print(f"Hexadecimal prime number: {hex_number}")
+
+        # Convert the hexadecimal prime number to a decimal number
+        p = int(hex_number, 16)
+        # print(f"The prime number: {p}")
+    else:
+        print("No match found")
+
+    # Extract the generator number
+    g_match = re.search(r"G:\s*(\d+)\s*\(0x2\)", dhparams_text)
+    if g_match:
+        g = int(g_match.group(1))
+        # print(f"Integer number from G: {g}")
+    else:
+        print("No match found for integer number in G:")
+
+    return g, p
+
+
 def main():
 
     # Setup the Paillier cryptosystem and secure ZK proofs
     paillier = Paillier()
-    generator_g = 2
+
+    generator, prime = generate_prime()
 
     # Setup the client and server
-    client = VotingClient(paillier, generator_g)
+    client = VotingClient(paillier, generator, prime)
     server = VotingServer(paillier)
 
     # Cast all votes
@@ -48,7 +85,7 @@ def main():
     verification = True
     for voter_id, cleartext_vote in voters_preferences.items():
         zk_verifier = server.votes[voter_id]["zk_verifier"]
-        zk_prover = Prover(secret=cleartext_vote)
+        zk_prover = Prover(g=generator, p=prime, secret=cleartext_vote)
 
         commitment = zk_prover.get_commitment()
         zk_verifier.set_commitment(commitment)
