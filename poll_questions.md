@@ -8,6 +8,8 @@ If the coin shows heads, you win $150.</br>
 Do you accept the gamble? Yes/No</br>
 
 "Thinking Fast and Slow", by Daniel Kahneman, chapter 26
+https://jesungpark.com/blog/on-prospect-theory.html
+
 
 2)</br>
 Suppose you're planning your best-ever vacation, and you're just told that at the end of the vacation, you'll get an
