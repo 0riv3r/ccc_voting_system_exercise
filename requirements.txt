@@ -1,0 +1,12 @@
+# Voting System Dependencies
+# Core cryptographic library for multiple-precision arithmetic
+gmpy2>=2.1.0
+
+# Jupyter for interactive notebooks
+jupyter>=1.0.0
+notebook>=6.4.0
+
+# Optional: For better development experience
+ipython>=7.0.0
+matplotlib>=3.5.0
+numpy>=1.21.0 

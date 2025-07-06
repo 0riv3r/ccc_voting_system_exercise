@@ -5,6 +5,15 @@ A challege for the CCC course that requires HE and ZKP
     $ conda activate ccc
     $ python voting_system.py
 
+    or:
+    python3 -m venv .venv
+    source .venv/bin/activate
+    pip install -r requirements.txt
+    cd src
+    python voting_system.py
+    
+
+
     Generating DH parameters, 512 bit long safe prime
     ..........+..............+.................+.................+.....................................+..............++*++*++*++*++*++*++*++*++*++*++*++*++*++*++*++*++*++*++*++*++*++*++*++*++*++*++*++*++*++*++*++*++*++*++*++*++*++*++*++*++*++*++*++*++*++*++*++*++*++*++*++*++*++*++*++*++*++*++*++*++*++*++*++*
 

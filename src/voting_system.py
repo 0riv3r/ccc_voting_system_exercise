@@ -33,15 +33,31 @@ def generate_prime() -> tuple:
         p = int(hex_number, 16)
         # print(f"The prime number: {p}")
     else:
-        print("No match found")
+         # Extract the multi-line hexadecimal prime number between "prime:" and "generator:"
+        match = re.search(r"prime:\s*([\s\S]*?)\s*generator:", dhparams_text, re.IGNORECASE)
+        if match:
+            hex_number = match.group(1).replace(":", "").replace("\n", "").replace(" ", "")
+            # print(f"Hexadecimal prime number: {hex_number}")
 
-    # Extract the generator number
+            # Convert the hexadecimal prime number to a decimal number
+            p = int(hex_number, 16)
+            # print(f"The prime number: {p}")
+        else:
+            print("No match found")
+
+    # Extract the generator number if G: is found
     g_match = re.search(r"G:\s*(\d+)\s*\(0x2\)", dhparams_text)
     if g_match:
         g = int(g_match.group(1))
         # print(f"Integer number from G: {g}")
     else:
-        print("No match found for integer number in G:")
+        # Extract the generator number if generator: is found
+        g_match = re.search(r"generator:\s*(\d+)\s*\(0x2\)", dhparams_text)
+        if g_match:
+            g = int(g_match.group(1))
+            # print(f"Integer number from G: {g}")
+        else:
+            print("No match found for integer number in G: or generator:")
 
     return g, p
 
